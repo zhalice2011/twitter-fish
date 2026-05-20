@@ -261,3 +261,7 @@ html.vscode-mode [data-testid="primaryColumn"]::after {
   pointer-events: none;
   z-index: 2;
 }
+
+html.vscode-mode[data-vsc-route="profile"] [data-testid="primaryColumn"]::after {
+  display: none !important;
+}

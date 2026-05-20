@@ -1,5 +1,6 @@
 const STYLE_ID_IMAGES = 'twitter-fish-hide-images';
 const STYLE_ID_VIDEOS = 'twitter-fish-hide-videos';
+const STYLE_ID_ADS = 'twitter-fish-hide-ads';
 
 const CSS_HIDE_IMAGES = `
 div[aria-labelledby]:not([role]):not([data-testid]):has([data-testid="tweetPhoto"]):not(:has([data-testid="videoPlayer"])) { display: none !important; }
@@ -12,6 +13,10 @@ const CSS_HIDE_VIDEOS = `
 div[aria-labelledby]:not([role]):not([data-testid]):has([data-testid="videoPlayer"]) { display: none !important; }
 [data-testid="card.layoutLarge.media"]:has(video) { display: none !important; }
 [data-testid="card.layoutSmall.media"]:has(video) { display: none !important; }
+`;
+
+const CSS_HIDE_ADS = `
+[data-testid="cellInnerDiv"]:has([data-testid="placementTracking"] article[data-testid="tweet"]) { display: none !important; }
 `;
 
 function applyStyle(id, css, enabled) {
@@ -28,9 +33,10 @@ function applyStyle(id, css, enabled) {
   }
 }
 
-function applyMediaSettings({ hideImages, hideVideos }) {
+function applyMediaSettings({ hideImages, hideVideos, hideAds }) {
   applyStyle(STYLE_ID_IMAGES, CSS_HIDE_IMAGES, hideImages);
   applyStyle(STYLE_ID_VIDEOS, CSS_HIDE_VIDEOS, hideVideos);
+  applyStyle(STYLE_ID_ADS, CSS_HIDE_ADS, hideAds);
 }
 
 function enableVscodeMode() {
@@ -65,7 +71,7 @@ function applySettings(cfg) {
 }
 
 // Init
-chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false }, applySettings);
+chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false, hideAds: true }, applySettings);
 
 // React to changes from popup
 chrome.storage.onChanged.addListener(() => {
@@ -73,7 +79,8 @@ chrome.storage.onChanged.addListener(() => {
   disableVscodeMode();
   applyStyle(STYLE_ID_IMAGES, '', false);
   applyStyle(STYLE_ID_VIDEOS, '', false);
+  applyStyle(STYLE_ID_ADS, '', false);
 
   // Then re-apply based on new settings
-  chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false }, applySettings);
+  chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false, hideAds: true }, applySettings);
 });

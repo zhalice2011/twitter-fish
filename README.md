@@ -73,3 +73,8 @@ Uses CSS `:has()` selectors to precisely distinguish image and video containers 
 ## License
 
 MIT
+
+
+## Acknowledgments
+
+- [LinuxDo](https://linux.do) — 学 AI，上 L 站

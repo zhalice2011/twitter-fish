@@ -180,8 +180,8 @@ const VscodeShell = {
       return { file: 'post.tsx', icon: 'tsx' };
     }
 
-    // /@username or /username patterns
-    const match = path.match(/^\/([^/]+)$/);
+    // /@username or /username profile tab patterns
+    const match = path.match(/^\/([^/]+)(?:\/(?:with_replies|highlights|articles|media|likes))?$/);
     if (match && !['home', 'explore', 'notifications', 'messages', 'bookmarks', 'settings'].includes(match[1])) {
       return { file: `@${match[1]}.tsx`, icon: 'tsx' };
     }
@@ -194,7 +194,7 @@ const VscodeShell = {
 
   _getRouteKind(path) {
     if (/^\/[^/]+\/status\/\d+/.test(path)) return 'status';
-    if (/^\/[^/]+$/.test(path) && !this._routeMap[path]) return 'profile';
+    if (/^\/[^/]+(?:\/(?:with_replies|highlights|articles|media|likes))?$/.test(path) && !this._routeMap[path]) return 'profile';
     return 'timeline';
   },
 

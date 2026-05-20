@@ -24,8 +24,7 @@ const TweetTransformer = {
       requestAnimationFrame(() => this._handleMutations(mutations));
     });
 
-    const target = document.querySelector('[data-testid="primaryColumn"]') || document.body;
-    this._observer.observe(target, { childList: true, subtree: true });
+    this._observer.observe(document.body, { childList: true, subtree: true });
   },
 
   stop() {
@@ -39,27 +38,45 @@ const TweetTransformer = {
     document.querySelectorAll('[data-vsc-hidden]').forEach(el => {
       el.style.display = '';
       el.removeAttribute('data-vsc-hidden');
+      el.removeAttribute('data-vsc-profile-native');
     });
     // Remove processed flags
     document.querySelectorAll('[data-vsc-processed]').forEach(el => {
       el.removeAttribute('data-vsc-processed');
     });
+    document.querySelectorAll('.vsc-profile-container').forEach(el => {
+      el.classList.remove('vsc-profile-container');
+    });
     this._lineCounter = 1;
   },
 
   _handleMutations(mutations) {
+    const articlesToProcess = new Set();
+
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (node.nodeType !== 1) continue;
+
+        const containingTweet = node.closest?.('article[data-testid="tweet"]');
+        if (containingTweet) {
+          articlesToProcess.add(containingTweet);
+        }
+
+        if (node.matches?.('article[data-testid="tweet"]')) {
+          articlesToProcess.add(node);
+        }
+
         if (node.matches && node.matches('[data-testid="cellInnerDiv"]')) {
           const tweet = node.querySelector('article[data-testid="tweet"]');
-          if (tweet) this._processTweet(tweet);
+          if (tweet) articlesToProcess.add(tweet);
         } else if (node.querySelectorAll) {
           const tweets = node.querySelectorAll('article[data-testid="tweet"]');
-          tweets.forEach(t => this._processTweet(t));
+          tweets.forEach(t => articlesToProcess.add(t));
         }
       }
     }
+
+    articlesToProcess.forEach(t => this._processTweet(t));
     this._processProfileHeader();
   },
 
@@ -69,7 +86,12 @@ const TweetTransformer = {
   },
 
   _processTweet(article) {
-    if (!article || article.dataset.vscProcessed) return;
+    if (!article) return;
+    if (article.dataset.vscProcessed) {
+      // Media often mounts after the article shell; keep scanning for late nodes.
+      this._transformMedia(article);
+      return;
+    }
     article.dataset.vscProcessed = '1';
 
     this._transformRetweet(article);
@@ -103,7 +125,17 @@ const TweetTransformer = {
     // Create comment line
     const comment = document.createElement('div');
     comment.className = 'vsc-comment-line vsc-injected';
-    comment.textContent = `// @${username} · ${timeText}`;
+
+    const prefix = document.createTextNode('// ');
+    const link = document.createElement('a');
+    link.href = `/${username}`;
+    link.className = 'vsc-comment-link';
+    link.textContent = `@${username}`;
+    const suffix = document.createTextNode(` · ${timeText}`);
+
+    comment.appendChild(prefix);
+    comment.appendChild(link);
+    comment.appendChild(suffix);
 
     // Hide original user row and insert comment
     userNameDiv.style.display = 'none';
@@ -206,16 +238,17 @@ const TweetTransformer = {
     if (!primary) return;
 
     const userName = primary.querySelector('[data-testid="UserName"]');
-    const profileNav = primary.querySelector(
-      'nav[aria-label*="Profile"], nav[aria-label*="个人资料"]'
-    );
+    const profileNav = this._findProfileNav(primary);
     if (!userName || !profileNav) return;
 
     const handleLink = Array.from(userName.querySelectorAll('a[href^="/"]'))
       .find(link => /^\/[^/]+$/.test(link.getAttribute('href') || ''));
-    const handle = handleLink?.getAttribute('href')?.slice(1) || location.pathname.slice(1);
+    const handle = handleLink?.getAttribute('href')?.slice(1) || location.pathname.split('/')[1] || '';
     const existingCard = primary.querySelector('.vsc-profile-card');
-    if (existingCard?.dataset.vscProfileHandle === handle) return;
+    if (existingCard?.dataset.vscProfileHandle === handle) {
+      this._hideNativeProfileHeaderSiblings(existingCard);
+      return;
+    }
     if (existingCard) existingCard.remove();
 
     const displayName = this._extractProfileDisplayName(userName, handle);
@@ -247,9 +280,36 @@ const TweetTransformer = {
 
     card.textContent = lines.join('\n');
 
-    const navWrapper = profileNav.parentElement || profileNav;
-    navWrapper.parentNode.insertBefore(card, navWrapper);
+    const profileContainer = this._findProfileContainer(userName, profileNav);
+    profileContainer.classList.add('vsc-profile-container');
+    const navWrapper = this._getDirectChild(profileContainer, profileNav) || profileNav;
+    profileContainer.insertBefore(card, navWrapper);
     this._hideNativeProfileHeaderSiblings(card);
+  },
+
+  _findProfileNav(primary) {
+    return primary.querySelector(
+      'nav[aria-label*="Profile"], nav[aria-label*="个人资料"], nav[role="navigation"]:has([role="tablist"])'
+    );
+  },
+
+  _findProfileContainer(userName, profileNav) {
+    let container = profileNav.parentElement;
+    while (container && container !== document.body) {
+      if (container.contains(userName) && container.contains(profileNav)) {
+        return container;
+      }
+      container = container.parentElement;
+    }
+    return profileNav.parentElement?.parentElement || profileNav.parentElement || profileNav;
+  },
+
+  _getDirectChild(container, descendant) {
+    let child = descendant;
+    while (child && child.parentElement !== container) {
+      child = child.parentElement;
+    }
+    return child?.parentElement === container ? child : null;
   },
 
   _extractProfileDisplayName(userName, handle) {
@@ -273,11 +333,9 @@ const TweetTransformer = {
     let sibling = container.firstElementChild;
     while (sibling && sibling !== card) {
       const next = sibling.nextElementSibling;
-      const isStickyTitle = Boolean(sibling.querySelector('[data-testid="app-bar-back"]'));
-      if (!isStickyTitle) {
-        sibling.style.display = 'none';
-        sibling.setAttribute('data-vsc-hidden', '1');
-      }
+      sibling.style.display = 'none';
+      sibling.setAttribute('data-vsc-hidden', '1');
+      sibling.setAttribute('data-vsc-profile-native', '1');
       sibling = next;
     }
   }
