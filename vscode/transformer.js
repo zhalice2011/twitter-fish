@@ -60,9 +60,11 @@ const TweetTransformer = {
         }
       }
     }
+    this._processProfileHeader();
   },
 
   _processAll() {
+    this._processProfileHeader();
     document.querySelectorAll('article[data-testid="tweet"]').forEach(t => this._processTweet(t));
   },
 
@@ -195,5 +197,88 @@ const TweetTransformer = {
     // Hide original social context
     socialContext.style.display = 'none';
     socialContext.setAttribute('data-vsc-hidden', '1');
+  },
+
+  _processProfileHeader() {
+    if (document.documentElement.dataset.vscRoute !== 'profile') return;
+
+    const primary = document.querySelector('[data-testid="primaryColumn"]');
+    if (!primary) return;
+
+    const userName = primary.querySelector('[data-testid="UserName"]');
+    const profileNav = primary.querySelector(
+      'nav[aria-label*="Profile"], nav[aria-label*="个人资料"]'
+    );
+    if (!userName || !profileNav) return;
+
+    const handleLink = Array.from(userName.querySelectorAll('a[href^="/"]'))
+      .find(link => /^\/[^/]+$/.test(link.getAttribute('href') || ''));
+    const handle = handleLink?.getAttribute('href')?.slice(1) || location.pathname.slice(1);
+    const existingCard = primary.querySelector('.vsc-profile-card');
+    if (existingCard?.dataset.vscProfileHandle === handle) return;
+    if (existingCard) existingCard.remove();
+
+    const displayName = this._extractProfileDisplayName(userName, handle);
+    const description = primary.querySelector('[data-testid="UserDescription"]')?.textContent.trim() || '';
+    const metadata = primary.querySelector('[data-testid="UserProfileHeader_Items"]')?.textContent.trim() || '';
+    const following = primary.querySelector(`a[href="/${handle}/following"]`)?.textContent.trim() || '';
+    const followers = (
+      primary.querySelector(`a[href="/${handle}/verified_followers"]`) ||
+      primary.querySelector(`a[href="/${handle}/followers"]`)
+    )?.textContent.trim() || '';
+
+    const card = document.createElement('section');
+    card.className = 'vsc-profile-card vsc-injected';
+    card.dataset.vscProfileHandle = handle;
+    card.setAttribute('aria-label', 'Profile summary');
+
+    const lines = [
+      `// profile: @${handle}`,
+      `export const ${this._toIdentifier(handle)} = {`,
+      `  name: ${JSON.stringify(displayName)},`,
+      `  handle: "@${handle}",`
+    ];
+
+    if (description) lines.push(`  bio: ${JSON.stringify(description)},`);
+    if (metadata) lines.push(`  meta: ${JSON.stringify(metadata)},`);
+    if (following) lines.push(`  following: ${JSON.stringify(following)},`);
+    if (followers) lines.push(`  followers: ${JSON.stringify(followers)},`);
+    lines.push('};');
+
+    card.textContent = lines.join('\n');
+
+    const navWrapper = profileNav.parentElement || profileNav;
+    navWrapper.parentNode.insertBefore(card, navWrapper);
+    this._hideNativeProfileHeaderSiblings(card);
+  },
+
+  _extractProfileDisplayName(userName, handle) {
+    const candidates = Array.from(userName.querySelectorAll('span'))
+      .map(el => el.textContent.trim())
+      .filter(Boolean)
+      .filter(text => text !== `@${handle}` && !text.includes(`@${handle}`));
+
+    return candidates[0] || handle;
+  },
+
+  _toIdentifier(value) {
+    const normalized = value.replace(/[^a-zA-Z0-9_$]/g, '_');
+    return /^[a-zA-Z_$]/.test(normalized) ? normalized : `user_${normalized}`;
+  },
+
+  _hideNativeProfileHeaderSiblings(card) {
+    const container = card.parentElement;
+    if (!container) return;
+
+    let sibling = container.firstElementChild;
+    while (sibling && sibling !== card) {
+      const next = sibling.nextElementSibling;
+      const isStickyTitle = Boolean(sibling.querySelector('[data-testid="app-bar-back"]'));
+      if (!isStickyTitle) {
+        sibling.style.display = 'none';
+        sibling.setAttribute('data-vsc-hidden', '1');
+      }
+      sibling = next;
+    }
   }
 };

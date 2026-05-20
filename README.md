@@ -4,6 +4,8 @@
 
 > 把 X/Twitter 伪装成 VSCode —— 或者只是隐藏时间线里的图片和视频。
 
+![Tutorial](image1.png)
+![Tutorial](image2.png)
 ![Tutorial](tutorial.gif)
 
 ---
