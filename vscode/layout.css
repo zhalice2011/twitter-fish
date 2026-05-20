@@ -1,0 +1,263 @@
+/* VSCode Shell Layout */
+
+/* Hide X.com native chrome */
+html.vscode-mode header[role="banner"],
+html.vscode-mode [data-testid="sidebarColumn"],
+html.vscode-mode [data-testid="DMDrawer"],
+html.vscode-mode [aria-label="Primary"],
+html.vscode-mode [data-testid="BottomBar"] {
+  display: none !important;
+}
+
+/* Body — keep natural scroll, just reset margins */
+html.vscode-mode body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--vsc-editor-bg) !important;
+}
+
+/* Activity Bar */
+#vsc-activitybar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 100vh;
+  background: var(--vsc-activitybar-bg);
+  border-right: 1px solid var(--vsc-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+  z-index: 99999;
+}
+
+#vsc-activitybar .vsc-ab-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  border-left: 2px solid transparent;
+}
+
+#vsc-activitybar .vsc-ab-icon.active {
+  opacity: 1;
+  border-left-color: var(--vsc-fg);
+}
+
+#vsc-activitybar .vsc-ab-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--vsc-fg);
+}
+
+/* Sidebar */
+#vsc-sidebar {
+  position: fixed;
+  top: 0;
+  left: 49px;
+  width: 220px;
+  height: 100vh;
+  background: var(--vsc-sidebar-bg);
+  border-right: 1px solid var(--vsc-border);
+  z-index: 99998;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: var(--vsc-fg);
+}
+
+#vsc-sidebar .vsc-sidebar-title {
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #8b929a;
+  text-transform: uppercase;
+}
+
+#vsc-sidebar .vsc-tree-item {
+  padding: 3px 8px 3px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#vsc-sidebar .vsc-tree-item:hover {
+  background: var(--vsc-selection);
+}
+
+#vsc-sidebar .vsc-tree-item.active {
+  background: var(--vsc-selection);
+  color: #fff;
+}
+
+#vsc-sidebar .vsc-tree-item .vsc-file-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+#vsc-sidebar .vsc-tree-section {
+  padding: 6px 8px 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Tab Bar */
+#vsc-tabbar {
+  position: fixed;
+  top: 0;
+  left: 270px;
+  right: 0;
+  height: 35px;
+  background: var(--vsc-tab-inactive-bg);
+  border-bottom: 1px solid var(--vsc-border);
+  display: flex;
+  align-items: stretch;
+  z-index: 99997;
+  overflow-x: auto;
+}
+
+#vsc-tabbar .vsc-tab {
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #8b929a;
+  border-right: 1px solid var(--vsc-border);
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+#vsc-tabbar .vsc-tab.active {
+  background: var(--vsc-tab-active-bg);
+  color: var(--vsc-fg);
+  border-bottom: 1px solid var(--vsc-tab-active-bg);
+}
+
+#vsc-tabbar .vsc-tab .vsc-tab-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Status Bar */
+#vsc-statusbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: var(--vsc-statusbar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  color: #fff;
+  z-index: 99999;
+}
+
+#vsc-statusbar .vsc-status-left,
+#vsc-statusbar .vsc-status-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#vsc-statusbar .vsc-status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+/* Main content positioning — keep in flow so X.com's virtual scroll still works */
+html.vscode-mode #react-root,
+html.vscode-mode #react-root > div,
+html.vscode-mode #react-root > div > div {
+  width: 100% !important;
+  max-width: none !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+html.vscode-mode main[role="main"],
+html.vscode-mode main[role="main"] > div {
+  max-width: none !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+}
+
+html.vscode-mode [data-testid="primaryColumn"] {
+  margin-left: 270px !important;
+  margin-right: 0 !important;
+  padding-top: 35px !important;
+  padding-bottom: 22px !important;
+  max-width: none !important;
+  width: calc(100vw - 270px) !important;
+  flex-basis: calc(100vw - 270px) !important;
+  flex-shrink: 0 !important;
+  align-self: flex-start !important;
+  box-sizing: border-box !important;
+  min-height: 100vh !important;
+  border: none !important;
+  background: var(--vsc-editor-bg) !important;
+}
+
+html.vscode-mode [data-testid="primaryColumn"] > div,
+html.vscode-mode [data-testid="primaryColumn"] > div > div,
+html.vscode-mode [data-testid="primaryColumn"] > div > div > div,
+html.vscode-mode [data-testid="primaryColumn"] section,
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="Timeline"],
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="主页时间线"],
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="时间线"],
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="Timeline"] > div,
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="主页时间线"] > div,
+html.vscode-mode [data-testid="primaryColumn"] [aria-label*="时间线"] > div {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+/* Hide the column borders/dividers */
+html.vscode-mode [data-testid="primaryColumn"] > div:first-child {
+  border: none !important;
+}
+
+/* Minimap simulation (subtle right-side decoration) */
+html.vscode-mode [data-testid="primaryColumn"]::after {
+  content: '';
+  position: fixed;
+  top: 35px;
+  right: 0;
+  width: 60px;
+  bottom: 22px;
+  background: rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
