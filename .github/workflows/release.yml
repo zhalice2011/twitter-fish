@@ -3,8 +3,6 @@ name: Release
 on:
   push:
     branches: [main]
-    tags:
-      - 'v*'
 
 jobs:
   release:
@@ -20,14 +18,12 @@ jobs:
       - name: Determine version
         id: version
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          else
-            SHORT_SHA=$(git rev-parse --short HEAD)
-            echo "tag=build-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          fi
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "v0.0.0")
+          MAJOR=$(echo "$LATEST_TAG" | sed 's/v//' | cut -d. -f1)
+          MINOR=$(echo "$LATEST_TAG" | sed 's/v//' | cut -d. -f2)
+          PATCH=$(echo "$LATEST_TAG" | sed 's/v//' | cut -d. -f3)
+          PATCH=$((PATCH + 1))
+          echo "tag=v${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
 
       - name: Package extension
         run: zip -r twitter-fish-${{ steps.version.outputs.tag }}.zip . -x "*.git*" "*.github*" "*.gif" "README.md" "LICENSE" ".claude/*"
@@ -37,5 +33,5 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           files: twitter-fish-${{ steps.version.outputs.tag }}.zip
-          prerelease: ${{ steps.version.outputs.prerelease }}
+          prerelease: false
           generate_release_notes: true

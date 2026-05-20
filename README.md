@@ -32,11 +32,22 @@
 
 ## Install / 安装
 
-1. Download or clone this repository / 下载或克隆本仓库
+### From Release / 从 Release 下载
+
+1. Go to [Releases](../../releases) and download the latest zip / 前往 [Releases](../../releases) 页面下载最新 zip
+2. Unzip to any folder / 解压到任意文件夹
+3. Open `chrome://extensions` / 打开 `chrome://extensions`
+4. Enable **Developer mode** (top-right toggle) / 开启右上角「开发者模式」
+5. Click **Load unpacked** / 点击「加载已解压的扩展程序」
+6. Select the unzipped folder / 选择解压后的文件夹
+
+### From Source / 从源码安装
+
+1. Clone this repository / 克隆本仓库
 2. Open `chrome://extensions` / 打开 `chrome://extensions`
-3. Enable **Developer mode** (top-right toggle) / 开启右上角「开发者模式」
+3. Enable **Developer mode** / 开启「开发者模式」
 4. Click **Load unpacked** / 点击「加载已解压的扩展程序」
-5. Select this project folder / 选择本项目文件夹
+5. Select the project folder / 选择项目文件夹
 
 ## Usage / 使用
 
