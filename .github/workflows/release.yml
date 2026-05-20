@@ -24,6 +24,11 @@ jobs:
           PATCH=$(echo "$LATEST_TAG" | sed 's/v//' | cut -d. -f3)
           PATCH=$((PATCH + 1))
           echo "tag=v${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          echo "version=${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync version to manifest.json
+        run: |
+          sed -i 's/"version": ".*"/"version": "${{ steps.version.outputs.version }}"/' manifest.json
 
       - name: Package extension
         run: zip -r twitter-fish-${{ steps.version.outputs.tag }}.zip . -x "*.git*" "*.github*" "*.gif" "README.md" "LICENSE" ".claude/*"
