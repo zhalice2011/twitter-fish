@@ -1,47 +1,62 @@
-# Twitter Media Toggle
+# Twitter Fish
 
-Chrome 扩展，控制 Twitter(x.com) 时间线中图片和视频的显示与隐藏。
+> Disguise X/Twitter as VSCode — or just hide media from your timeline.
 
-## 功能
+> 把 X/Twitter 伪装成 VSCode —— 或者只是隐藏时间线里的图片和视频。
 
-- 独立开关：分别控制图片和视频的可见性
-- 完全折叠：隐藏后不留任何占位空间
-- 实时生效：切换开关无需刷新页面
-- 设置持久化：通过 `chrome.storage.sync` 跨会话保存
+![Tutorial](tutorial.gif)
 
-## 安装
+---
 
-1. 打开 `chrome://extensions`
-2. 开启右上角「开发者模式」
-3. 点击「加载已解压的扩展程序」
-4. 选择本项目文件夹
+## Features / 功能
 
-## 使用
+- **VSCode Mode** — Transform Twitter into a VSCode-like interface. Browse tweets disguised as code.
+- **Hide Images** — Collapse all image content from your timeline with zero leftover space.
+- **Hide Videos** — Collapse all video content from your timeline with zero leftover space.
+- **Instant Toggle** — All changes take effect immediately, no page refresh needed.
+- **Persistent Settings** — Your preferences sync across sessions via `chrome.storage.sync`.
 
-点击浏览器工具栏中的扩展图标，在弹出面板中切换：
+---
 
-- **隐藏图片** — 折叠时间线中的纯图片内容
-- **隐藏视频** — 折叠时间线中的视频内容
+- **VSCode 模式** — 将 Twitter 变身为 VSCode 界面，推文伪装成代码。
+- **隐藏图片** — 折叠时间线中所有图片，不留任何占位空间。
+- **隐藏视频** — 折叠时间线中所有视频，不留任何占位空间。
+- **即时生效** — 切换开关无需刷新页面。
+- **设置持久化** — 通过 `chrome.storage.sync` 跨会话同步保存。
 
-## 文件结构
+## Menu / 菜单
 
-```
-├── manifest.json   # Chrome Extension MV3 配置
-├── content.js      # 内容脚本（注入隐藏 CSS）
-├── popup.html      # Popup 界面
-├── popup.js        # Popup 逻辑
-└── icons/          # 扩展图标
-```
+![Menu](menu.gif)
 
-## 技术原理
+## Install / 安装
 
-通过 CSS `:has()` 选择器精准区分图片和视频容器，在推文的媒体区域容器层级注入 `display: none`，确保完全折叠无占位。
+1. Download or clone this repository / 下载或克隆本仓库
+2. Open `chrome://extensions` / 打开 `chrome://extensions`
+3. Enable **Developer mode** (top-right toggle) / 开启右上角「开发者模式」
+4. Click **Load unpacked** / 点击「加载已解压的扩展程序」
+5. Select this project folder / 选择本项目文件夹
 
-## 兼容性
+## Usage / 使用
 
-- Chrome 105+（需要 CSS `:has()` 支持）
-- 匹配域名：`x.com`、`twitter.com`
+Click the extension icon in your browser toolbar to open the popup panel:
 
-![alt text](<Kapture 2026-05-20 at 20.29.08.gif>)
+点击浏览器工具栏中的扩展图标，打开弹出面板：
 
-![alt text](<Kapture 2026-05-20 at 20.31.11.gif>)
+- **VSCode Mode** — Toggle the full VSCode disguise / 开启完整 VSCode 伪装
+- **Hide Images** — Toggle image visibility / 切换图片显示
+- **Hide Videos** — Toggle video visibility / 切换视频显示
+
+## How It Works / 技术原理
+
+Uses CSS `:has()` selectors to precisely distinguish image and video containers within tweets, injecting `display: none` at the media area container level to ensure complete collapse with no residual space. VSCode mode overlays a full IDE shell (activity bar, sidebar, tabs, status bar) and transforms tweets into syntax-highlighted code blocks.
+
+通过 CSS `:has()` 选择器精准区分推文中的图片和视频容器，在媒体区域容器层级注入 `display: none`，确保完全折叠无占位。VSCode 模式覆盖完整的 IDE 外壳（活动栏、侧边栏、标签页、状态栏），并将推文转换为语法高亮的代码块。
+
+## Compatibility / 兼容性
+
+- Chrome 105+ (requires CSS `:has()` support)
+- Matches: `x.com`, `twitter.com`
+
+## License
+
+MIT

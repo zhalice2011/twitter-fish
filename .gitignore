@@ -1,0 +1,15 @@
+# Package
+*.zip
+*.crx
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Claude
+.claude/
