@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Twitter Fish",
+  "version": "2.0.0",
+  "description": "Disguise X/Twitter as VSCode — or just hide media",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://x.com/*", "*://twitter.com/*"],
+      "css": ["vscode/theme.css", "vscode/layout.css", "vscode/tweet-as-code.css"],
+      "js": ["vscode/shell.js", "vscode/transformer.js", "content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/vscode/*"],
+      "matches": ["*://x.com/*", "*://twitter.com/*"]
+    }
+  ]
+}
