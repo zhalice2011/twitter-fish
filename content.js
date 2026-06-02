@@ -1,86 +1,78 @@
-const STYLE_ID_IMAGES = 'twitter-fish-hide-images';
-const STYLE_ID_VIDEOS = 'twitter-fish-hide-videos';
-const STYLE_ID_ADS = 'twitter-fish-hide-ads';
+// WebFish content-script bootstrap.
+// Picks the site adapter that matches this tab and wires it to core/.
+'use strict';
 
-const CSS_HIDE_IMAGES = `
-div[aria-labelledby]:not([role]):not([data-testid]):has([data-testid="tweetPhoto"]):not(:has([data-testid="videoPlayer"])) { display: none !important; }
-[data-testid="card.layoutLarge.media"]:not(:has(video)) { display: none !important; }
-[data-testid="card.layoutSmall.media"]:not(:has(video)) { display: none !important; }
-[data-testid="article-cover-image"] { display: none !important; }
-`;
+const STORAGE_DEFAULTS = { vscodeMode: false, hideImages: false, hideVideos: false, hideAds: true };
 
-const CSS_HIDE_VIDEOS = `
-div[aria-labelledby]:not([role]):not([data-testid]):has([data-testid="videoPlayer"]) { display: none !important; }
-[data-testid="card.layoutLarge.media"]:has(video) { display: none !important; }
-[data-testid="card.layoutSmall.media"]:has(video) { display: none !important; }
-`;
-
-const CSS_HIDE_ADS = `
-[data-testid="cellInnerDiv"]:has([data-testid="placementTracking"] article[data-testid="tweet"]) { display: none !important; }
-`;
-
-function applyStyle(id, css, enabled) {
-  let el = document.getElementById(id);
-  if (enabled) {
-    if (!el) {
-      el = document.createElement('style');
-      el.id = id;
-      el.textContent = css;
-      document.documentElement.appendChild(el);
-    }
-  } else {
-    if (el) el.remove();
+function getAdapter() {
+  if (!window.WebFish) {
+    console.warn('[WebFish] registry missing');
+    return null;
   }
+  const adapter = window.WebFish.match(location.hostname, location.pathname);
+  if (!adapter) {
+    console.warn('[WebFish] no adapter for', location.hostname);
+  }
+  return adapter;
 }
 
-function applyMediaSettings({ hideImages, hideVideos, hideAds }) {
-  applyStyle(STYLE_ID_IMAGES, CSS_HIDE_IMAGES, hideImages);
-  applyStyle(STYLE_ID_VIDEOS, CSS_HIDE_VIDEOS, hideVideos);
-  applyStyle(STYLE_ID_ADS, CSS_HIDE_ADS, hideAds);
+function applyMediaToggles(adapter, cfg) {
+  const styles = (adapter && adapter.styles) || {};
+  const caps = (adapter && adapter.capabilities) || {};
+  const apply = window.WebFishStyle.applyStyle;
+  apply('webfish-hide-images', styles.hideImages || '', caps.hideImages && cfg.hideImages);
+  apply('webfish-hide-videos', styles.hideVideos || '', caps.hideVideos && cfg.hideVideos);
+  apply('webfish-hide-ads',    styles.hideAds    || '', caps.ads        && cfg.hideAds);
 }
 
-function enableVscodeMode() {
+function enableVscodeMode(adapter, cfg) {
   document.documentElement.classList.add('vscode-mode');
-  VscodeShell.inject();
-  // Wait for primary column to appear before starting transformer
-  const waitForColumn = () => {
-    if (document.querySelector('[data-testid="primaryColumn"]')) {
-      TweetTransformer.start();
+  window.VscodeShell.inject(adapter);
+  window.TweetTransformer.configure(adapter, cfg);
+  // Wait for primary column before starting transformer
+  const sel = adapter.transformer.primaryColumnSelector;
+  const waitFor = () => {
+    if (!sel || document.querySelector(sel)) {
+      window.TweetTransformer.start();
     } else {
-      requestAnimationFrame(waitForColumn);
+      requestAnimationFrame(waitFor);
     }
   };
-  waitForColumn();
+  waitFor();
 }
 
 function disableVscodeMode() {
   document.documentElement.classList.remove('vscode-mode');
-  VscodeShell.remove();
-  TweetTransformer.stop();
+  window.VscodeShell.remove();
+  window.TweetTransformer.stop();
 }
 
-function applySettings(cfg) {
-  applyMediaSettings(cfg);
-
-  if (cfg.vscodeMode) {
-    TweetTransformer.configure(cfg);
-    enableVscodeMode();
+function applySettings(adapter, cfg) {
+  applyMediaToggles(adapter, cfg);
+  const caps = (adapter && adapter.capabilities) || {};
+  if (caps.vscode && cfg.vscodeMode) {
+    enableVscodeMode(adapter, cfg);
   } else {
     disableVscodeMode();
   }
 }
 
-// Init
-chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false, hideAds: true }, applySettings);
-
-// React to changes from popup
-chrome.storage.onChanged.addListener(() => {
-  // First clean up any existing VSCode mode state
+function refresh() {
+  const adapter = getAdapter();
+  if (!adapter) return;
+  // Tear down before re-applying so style/state changes are clean.
   disableVscodeMode();
-  applyStyle(STYLE_ID_IMAGES, '', false);
-  applyStyle(STYLE_ID_VIDEOS, '', false);
-  applyStyle(STYLE_ID_ADS, '', false);
+  ['webfish-hide-images', 'webfish-hide-videos', 'webfish-hide-ads'].forEach(id => {
+    window.WebFishStyle.applyStyle(id, '', false);
+  });
+  chrome.storage.sync.get(STORAGE_DEFAULTS, cfg => applySettings(adapter, cfg));
+}
 
-  // Then re-apply based on new settings
-  chrome.storage.sync.get({ vscodeMode: false, hideImages: false, hideVideos: false, hideAds: true }, applySettings);
+// Init
+chrome.storage.sync.get(STORAGE_DEFAULTS, cfg => {
+  const adapter = getAdapter();
+  if (adapter) applySettings(adapter, cfg);
 });
+
+// React to popup changes
+chrome.storage.onChanged.addListener(refresh);

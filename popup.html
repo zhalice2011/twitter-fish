@@ -12,9 +12,14 @@
       margin: 0;
     }
     h3 {
-      margin: 0 0 12px;
+      margin: 0 0 4px;
       font-size: 15px;
       font-weight: 700;
+    }
+    .site-label {
+      font-size: 11px;
+      color: #536471;
+      margin-bottom: 12px;
     }
     .row {
       display: flex;
@@ -68,9 +73,8 @@
     .toggle input:checked + .slider::before {
       transform: translateX(18px);
     }
-    .row.disabled {
-      opacity: 0.4;
-      pointer-events: none;
+    .row.hidden, .section.hidden, .divider.hidden {
+      display: none !important;
     }
     .section-label {
       font-size: 11px;
@@ -79,60 +83,66 @@
       letter-spacing: 0.5px;
       margin: 4px 0;
     }
+    .empty-state {
+      padding: 12px 0;
+      color: #536471;
+      font-size: 12px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h3>Twitter Fish</h3>
+  <h3>Web Fish</h3>
+  <div class="site-label" id="siteLabel">未识别站点</div>
 
-  <div class="section-label">伪装模式</div>
-  <div class="row">
-    <span>VSCode 模式</span>
-    <label class="toggle">
-      <input type="checkbox" id="vscodeMode">
-      <span class="slider slider-purple"></span>
-    </label>
+  <div class="empty-state hidden" id="emptyState">
+    本扩展暂不支持当前站点。<br>
+    支持：x.com / twitter.com / linux.do
   </div>
 
-  <hr class="divider">
-
-  <div class="section-label">广告</div>
-  <div class="row">
-    <span>去除广告</span>
-    <label class="toggle">
-      <input type="checkbox" id="hideAds">
-      <span class="slider"></span>
-    </label>
+  <div class="section" id="sectionVscode">
+    <div class="section-label">伪装模式</div>
+    <div class="row" id="rowVscode">
+      <span>VSCode 模式</span>
+      <label class="toggle">
+        <input type="checkbox" id="vscodeMode">
+        <span class="slider slider-purple"></span>
+      </label>
+    </div>
+    <hr class="divider">
   </div>
 
-  <hr class="divider">
-
-  <div class="section-label">广告</div>
-  <div class="row">
-    <span>去除广告</span>
-    <label class="toggle">
-      <input type="checkbox" id="hideAds">
-      <span class="slider"></span>
-    </label>
+  <div class="section" id="sectionAds">
+    <div class="section-label">广告</div>
+    <div class="row" id="rowAds">
+      <span>去除广告</span>
+      <label class="toggle">
+        <input type="checkbox" id="hideAds">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <hr class="divider">
   </div>
 
-  <hr class="divider">
-
-  <div class="section-label">媒体控制</div>
-  <div class="row" id="rowImages">
-    <span>隐藏图片</span>
-    <label class="toggle">
-      <input type="checkbox" id="hideImages">
-      <span class="slider"></span>
-    </label>
+  <div class="section" id="sectionMedia">
+    <div class="section-label">媒体控制</div>
+    <div class="row" id="rowImages">
+      <span>隐藏图片</span>
+      <label class="toggle">
+        <input type="checkbox" id="hideImages">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="row" id="rowVideos">
+      <span>隐藏视频</span>
+      <label class="toggle">
+        <input type="checkbox" id="hideVideos">
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
-  <div class="row" id="rowVideos">
-    <span>隐藏视频</span>
-    <label class="toggle">
-      <input type="checkbox" id="hideVideos">
-      <span class="slider"></span>
-    </label>
-  </div>
 
+  <script src="shared/match.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

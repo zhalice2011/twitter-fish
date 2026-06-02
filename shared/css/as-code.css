@@ -1,0 +1,74 @@
+/* Generic "as-code" UI primitives — site-agnostic.
+ * Class names: .vsc-injected, .vsc-line-numbers, .vsc-comment-line,
+ * .vsc-comment-link, .vsc-import-line, .vsc-retweet-line, .vsc-media-comment,
+ * .vsc-profile-card. Site-specific selectors (article[data-testid="tweet"],
+ * .topic-post, .cooked …) live in sites/<id>/css/. */
+
+/* Line numbers gutter */
+html.vscode-mode .vsc-line-numbers {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 38px;
+  text-align: right;
+  padding-right: 8px;
+  color: var(--vsc-line-number);
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 18px;
+  user-select: none;
+  pointer-events: none;
+  white-space: pre;
+}
+
+/* Username → comment */
+html.vscode-mode .vsc-comment-line {
+  color: var(--vsc-comment) !important;
+  font-style: italic;
+  line-height: 20px;
+  margin-bottom: 2px;
+}
+
+html.vscode-mode .vsc-comment-line .vsc-comment-link {
+  color: inherit !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+html.vscode-mode .vsc-comment-line .vsc-comment-link:hover {
+  text-decoration: underline !important;
+}
+
+/* Numbers → orange */
+html.vscode-mode .vsc-number {
+  color: var(--vsc-number) !important;
+}
+
+/* Import-style line (used for retweets / cross-references) */
+html.vscode-mode .vsc-import-line {
+  line-height: 20px;
+  margin-bottom: 2px;
+}
+
+html.vscode-mode .vsc-retweet-line {
+  color: var(--vsc-comment);
+  font-style: italic;
+  line-height: 20px;
+  margin-bottom: 2px;
+}
+
+html.vscode-mode .vsc-import-line .vsc-kw {
+  color: var(--vsc-keyword);
+}
+
+html.vscode-mode .vsc-import-line .vsc-str {
+  color: var(--vsc-string);
+}
+
+/* Media collapsed comment */
+html.vscode-mode .vsc-media-comment {
+  color: var(--vsc-comment);
+  font-style: italic;
+  padding: 4px 0;
+  line-height: 20px;
+}

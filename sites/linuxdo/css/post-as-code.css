@@ -1,0 +1,233 @@
+/* Linuxdo (Discourse) — VSCode-mode rules.
+ * Site-specific selectors only. Generic primitives in shared/css/. */
+
+/* --- Hide Discourse native chrome --- */
+html.vscode-mode header.d-header,
+html.vscode-mode #d-sidebar,
+html.vscode-mode .below-site-header-panel,
+html.vscode-mode .alert-info,
+html.vscode-mode footer#footer {
+  display: none !important;
+}
+
+/* --- Body / main outlet positioning --- */
+html.vscode-mode body {
+  background: var(--vsc-editor-bg) !important;
+}
+
+html.vscode-mode #main-outlet,
+html.vscode-mode .above-main-container,
+html.vscode-mode .above-main-container-outlet,
+html.vscode-mode #main {
+  margin-left: 270px !important;
+  margin-right: 0 !important;
+  padding-top: 35px !important;
+  padding-bottom: 22px !important;
+  max-width: none !important;
+  width: calc(100vw - 270px) !important;
+  box-sizing: border-box !important;
+  background: var(--vsc-editor-bg) !important;
+  color: var(--vsc-fg) !important;
+}
+
+html.vscode-mode #main-outlet-wrapper {
+  --d-sidebar-width: 0 !important;
+  display: block !important;
+  grid-template-columns: none !important;
+}
+
+html.vscode-mode #main-container,
+html.vscode-mode #main-outlet,
+html.vscode-mode .container.list-container,
+html.vscode-mode .container.posts {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* --- Topic list (feed) --- */
+html.vscode-mode .topic-list,
+html.vscode-mode .topic-list tbody,
+html.vscode-mode .topic-list-header {
+  background: var(--vsc-editor-bg) !important;
+  color: var(--vsc-fg) !important;
+}
+
+html.vscode-mode tr.topic-list-item {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, 'Courier New', monospace !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  background: var(--vsc-editor-bg) !important;
+  border-bottom: 1px solid var(--vsc-border) !important;
+}
+
+html.vscode-mode tr.topic-list-item:hover {
+  background: var(--vsc-selection) !important;
+}
+
+html.vscode-mode tr.topic-list-item td.main-link {
+  padding: 6px 12px 6px 50px !important;
+  position: relative !important;
+}
+
+html.vscode-mode tr.topic-list-item .title.raw-topic-link {
+  color: var(--vsc-function) !important;
+  font-weight: normal !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+html.vscode-mode tr.topic-list-item .title.raw-topic-link:hover {
+  text-decoration: underline !important;
+}
+
+html.vscode-mode tr.topic-list-item .badge-category__name {
+  color: var(--vsc-keyword) !important;
+}
+
+html.vscode-mode tr.topic-list-item .discourse-tag {
+  color: var(--vsc-string) !important;
+  background: transparent !important;
+}
+
+html.vscode-mode tr.topic-list-item .badge-notification {
+  background: var(--vsc-surface) !important;
+  color: var(--vsc-fg) !important;
+}
+
+/* Remove table-header banner styling */
+html.vscode-mode .topic-list-header {
+  border-bottom: 1px solid var(--vsc-border) !important;
+}
+html.vscode-mode .topic-list-header th {
+  color: var(--vsc-muted) !important;
+  font-weight: 400 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 11px !important;
+  background: var(--vsc-tab-inactive-bg) !important;
+}
+
+/* --- Single topic / posts --- */
+html.vscode-mode .topic-post,
+html.vscode-mode .topic-post article {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, 'Courier New', monospace !important;
+  font-size: 13px !important;
+  line-height: 20px !important;
+  background: var(--vsc-editor-bg) !important;
+  border-bottom: 1px solid var(--vsc-border) !important;
+  color: var(--vsc-fg) !important;
+}
+
+html.vscode-mode .topic-post {
+  padding: 8px 12px 8px 50px !important;
+  position: relative !important;
+}
+
+html.vscode-mode .topic-post .post-avatar,
+html.vscode-mode .topic-post .topic-avatar {
+  display: none !important;
+}
+
+html.vscode-mode .topic-post .topic-meta-data {
+  display: none !important; /* replaced by our injected vsc-comment-line */
+}
+
+html.vscode-mode .topic-post .cooked {
+  color: var(--vsc-fg) !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+html.vscode-mode .topic-post .cooked p,
+html.vscode-mode .topic-post .cooked li,
+html.vscode-mode .topic-post .cooked blockquote {
+  font-family: inherit !important;
+  color: var(--vsc-fg) !important;
+}
+
+html.vscode-mode .topic-post .cooked a {
+  color: var(--vsc-string) !important;
+}
+
+html.vscode-mode .topic-post .cooked code,
+html.vscode-mode .topic-post .cooked pre {
+  background: var(--vsc-surface) !important;
+  color: var(--vsc-fg) !important;
+  border: 1px solid var(--vsc-border) !important;
+}
+
+html.vscode-mode .topic-post .cooked blockquote {
+  border-left: 2px solid var(--vsc-comment) !important;
+  background: var(--vsc-surface) !important;
+  color: var(--vsc-muted) !important;
+}
+
+html.vscode-mode .topic-post .cooked h1,
+html.vscode-mode .topic-post .cooked h2,
+html.vscode-mode .topic-post .cooked h3,
+html.vscode-mode .topic-post .cooked h4 {
+  color: var(--vsc-keyword) !important;
+  font-family: inherit !important;
+}
+
+/* Post action bar (like, reply, bookmark) — subtle */
+html.vscode-mode .topic-post .post-controls,
+html.vscode-mode .topic-post .post-menu-area,
+html.vscode-mode .topic-post .actions {
+  opacity: 0.5 !important;
+  filter: grayscale(1) !important;
+  transition: opacity 0.2s;
+}
+html.vscode-mode .topic-post:hover .post-controls,
+html.vscode-mode .topic-post:hover .actions {
+  opacity: 0.85 !important;
+}
+
+/* --- Profile page --- */
+html.vscode-mode[data-vsc-route="profile"] .user-main,
+html.vscode-mode[data-vsc-route="profile"] .user-content,
+html.vscode-mode[data-vsc-route="profile"] #user-content {
+  background: var(--vsc-editor-bg) !important;
+  color: var(--vsc-fg) !important;
+}
+
+html.vscode-mode[data-vsc-route="profile"] .vsc-profile-card {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 12px 0 !important;
+  padding: 12px 16px 12px 50px !important;
+  box-sizing: border-box !important;
+  border-bottom: 1px solid var(--vsc-border) !important;
+  background: var(--vsc-editor-bg) !important;
+  color: var(--vsc-fg) !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, 'Courier New', monospace !important;
+  font-size: 12px !important;
+  line-height: 20px !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Hide common Discourse promo / banner panels */
+html.vscode-mode .topic-status-info,
+html.vscode-mode .global-notice,
+html.vscode-mode .signup-cta {
+  display: none !important;
+}
+
+/* Minimap simulation — same trick as Twitter */
+html.vscode-mode #main-outlet::after {
+  content: '';
+  position: fixed;
+  top: 35px;
+  right: 0;
+  width: 60px;
+  bottom: 22px;
+  background: rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
+html.vscode-mode[data-vsc-route="profile"] #main-outlet::after { display: none !important; }

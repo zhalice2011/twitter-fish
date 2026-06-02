@@ -1,19 +1,69 @@
-/* VSCode Shell Layout */
+/* VSCode shell — site-agnostic.
+ * Theme variables, scrollbars, body reset, and the four fixed bars
+ * (activity / sidebar / tabbar / statusbar). Site-specific layout
+ * (hiding native chrome, repositioning the main column, recoloring
+ * inline-styled elements) lives in sites/<id>/css/. */
 
-/* Hide X.com native chrome */
-html.vscode-mode header[role="banner"],
-html.vscode-mode [data-testid="sidebarColumn"],
-html.vscode-mode [data-testid="DMDrawer"],
-html.vscode-mode [aria-label="Primary"],
-html.vscode-mode [data-testid="BottomBar"] {
-  display: none !important;
+html.vscode-mode {
+  --vsc-bg: #282c34;
+  --vsc-fg: #abb2bf;
+  --vsc-sidebar-bg: #21252b;
+  --vsc-activitybar-bg: #333842;
+  --vsc-editor-bg: #282c34;
+  --vsc-statusbar-bg: #68217a;
+  --vsc-tab-active-bg: #282c34;
+  --vsc-tab-inactive-bg: #21252b;
+  --vsc-tab-border: #181a1f;
+  --vsc-border: #181a1f;
+  --vsc-accent: #528bff;
+  --vsc-scrollbar: #4e5666;
+  --vsc-selection: #3e4451;
+  --vsc-surface: #2c313a;
+  --vsc-muted: #7f848e;
+  --vsc-hover: #323844;
+  --vsc-line-number: #495162;
+  --vsc-line-number-active: #abb2bf;
+
+  /* Syntax colors */
+  --vsc-comment: #5c6370;
+  --vsc-keyword: #c678dd;
+  --vsc-string: #98c379;
+  --vsc-function: #61afef;
+  --vsc-variable: #e06c75;
+  --vsc-number: #d19a66;
+  --vsc-type: #e5c07b;
+  --vsc-operator: #56b6c2;
 }
 
-/* Body — keep natural scroll, just reset margins */
+html.vscode-mode,
+html.vscode-mode body {
+  background-color: var(--vsc-bg) !important;
+  color: var(--vsc-fg) !important;
+}
+
 html.vscode-mode body {
   margin: 0 !important;
   padding: 0 !important;
   background: var(--vsc-editor-bg) !important;
+}
+
+html.vscode-mode * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vsc-scrollbar) transparent;
+}
+
+html.vscode-mode ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html.vscode-mode ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html.vscode-mode ::-webkit-scrollbar-thumb {
+  background: var(--vsc-scrollbar);
+  border-radius: 0;
 }
 
 /* Activity Bar */
@@ -187,81 +237,4 @@ html.vscode-mode body {
   align-items: center;
   gap: 4px;
   cursor: default;
-}
-
-/* Main content positioning — keep in flow so X.com's virtual scroll still works */
-html.vscode-mode #react-root,
-html.vscode-mode #react-root > div,
-html.vscode-mode #react-root > div > div {
-  width: 100% !important;
-  max-width: none !important;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
-}
-
-html.vscode-mode main[role="main"],
-html.vscode-mode main[role="main"] > div {
-  max-width: none !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
-}
-
-html.vscode-mode [data-testid="primaryColumn"] {
-  margin-left: 270px !important;
-  margin-right: 0 !important;
-  padding-top: 35px !important;
-  padding-bottom: 22px !important;
-  max-width: none !important;
-  width: calc(100vw - 270px) !important;
-  flex-basis: calc(100vw - 270px) !important;
-  flex-shrink: 0 !important;
-  align-self: flex-start !important;
-  box-sizing: border-box !important;
-  min-height: 100vh !important;
-  border: none !important;
-  background: var(--vsc-editor-bg) !important;
-}
-
-html.vscode-mode [data-testid="primaryColumn"] > div,
-html.vscode-mode [data-testid="primaryColumn"] > div > div,
-html.vscode-mode [data-testid="primaryColumn"] > div > div > div,
-html.vscode-mode [data-testid="primaryColumn"] section,
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="Timeline"],
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="主页时间线"],
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="时间线"],
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="Timeline"] > div,
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="主页时间线"] > div,
-html.vscode-mode [data-testid="primaryColumn"] [aria-label*="时间线"] > div {
-  max-width: none !important;
-  width: 100% !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  align-self: stretch !important;
-  box-sizing: border-box !important;
-}
-
-/* Hide the column borders/dividers */
-html.vscode-mode [data-testid="primaryColumn"] > div:first-child {
-  border: none !important;
-}
-
-/* Minimap simulation (subtle right-side decoration) */
-html.vscode-mode [data-testid="primaryColumn"]::after {
-  content: '';
-  position: fixed;
-  top: 35px;
-  right: 0;
-  width: 60px;
-  bottom: 22px;
-  background: rgba(0, 0, 0, 0.15);
-  pointer-events: none;
-  z-index: 2;
-}
-
-html.vscode-mode[data-vsc-route="profile"] [data-testid="primaryColumn"]::after {
-  display: none !important;
 }
